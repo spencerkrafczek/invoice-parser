@@ -37,3 +37,9 @@ def extract(file):
     
     return data
 
+st.set_page_config(page_title="vellum", page_icon= "✨")
+
+st.title("vellum")
+st.write("upload a pdf invoice and watch the magic happen")
+
+uploaded_file = st.file_uploader("Upload Invoice (PDF)", type = "pdf")
