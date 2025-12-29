@@ -37,9 +37,24 @@ def extract(file):
     
     return data
 
-st.set_page_config(page_title="vellum", page_icon= "✨")
+st.set_page_config(page_title="Invoice Parser", page_icon= "✨")
 
-st.title("vellum")
-st.write("upload a pdf invoice and watch the magic happen")
+st.title("Invoice Parser")
+st.write("Upload a pdf invoice and watch the magic happen")
 
 uploaded_file = st.file_uploader("Upload Invoice (PDF)", type = "pdf")
+
+if uploaded_file is not None:
+    with st.spinner("Analyzing PDF..."):
+        try:
+            extracted_data = extract(uploaded_file)
+
+            st.success("Extraction Complete!")
+            st.divider()
+
+            col1, col2 = st.columns(2)
+            col1.metric("Invoice Number", extracted_data['invoice_number'])
+            col2.metric("Total Amount", f"${float(extracted_data['total_amount']):.2f}")
+
+        except Exception as e:
+            st.error(f"Error parsing file: {e}")
