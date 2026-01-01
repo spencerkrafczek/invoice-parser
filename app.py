@@ -33,7 +33,7 @@ def extract(file):
                 }
 
                 items_raw.append(item)
-        data['line items'] = items_raw
+        data['line_items'] = items_raw
     
     return data
 
@@ -55,6 +55,14 @@ if uploaded_file is not None:
             col1, col2 = st.columns(2)
             col1.metric("Invoice Number", extracted_data['invoice_number'])
             col2.metric("Total Amount", f"${float(extracted_data['total_amount']):.2f}")
+
+            st.subheader("Line Items (Review)")
+            df = pd.DataFrame(extracted_data['line_items'])
+            edited_df = st.data_editor(df, num_rows="dynamic", use_container_width=True)
+
+            st.divider()
+            csv = edited_df.to_csv(index=False).encode('utf-8')
+            st.download_button("📥 Download Excel/CSV", csv, "invoice_data.csv", "text/csv")
 
         except Exception as e:
             st.error(f"Error parsing file: {e}")
