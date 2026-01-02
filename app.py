@@ -25,18 +25,20 @@ def extract(file):
         tables = page.extract_table(table_settings)
         items_raw = []
 
+        found_header = False
+
         if tables:
             for row in tables:
-                if not row:
+                if not row or len(row) < 4: continue
+
+                first_cell = str(row[0])
+
+                if "Description" in first_cell:
+                    found_header = True
                     continue
 
-                if "Description" in str(row[0]): 
-                    continue
-
-                if not row[0]: continue
-
-                if len(row) < 4: 
-                    continue
+                if "TOTAL" in first_cell or "Total" in first_cell:
+                    break
 
                 item = {
                     "Description" : row[0],
@@ -71,7 +73,7 @@ if uploaded_file is not None:
 
             st.subheader("Line Items (Review)")
             df = pd.DataFrame(extracted_data['line_items'])
-            edited_df = st.data_editor(df, num_rows="dynamic", use_container_width=True)
+            edited_df = st.data_editor(df, num_rows="dynamic", width="stretch")
 
             st.divider()
             csv = edited_df.to_csv(index=False).encode('utf-8')
