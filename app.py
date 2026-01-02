@@ -17,12 +17,25 @@ def extract(file):
         total_match = re.search(r'TOTAL:\s*\$([\d\.]+)', text)
         data['total_amount'] = total_match.group(1) if total_match else 0.0
 
-        tables = page.extract_table()
+        table_settings = {
+            "vertical_strategy": "explicit", 
+            "explicit_vertical_lines": [50, 340, 410, 490, 550],
+            "horizontal_strategy": "text",
+        }
+        tables = page.extract_table(table_settings)
         items_raw = []
 
         if tables:
             for row in tables:
-                if not row or "Description" in row[0] or row[0] == "":
+                if not row:
+                    continue
+
+                if "Description" in str(row[0]): 
+                    continue
+
+                if not row[0]: continue
+
+                if len(row) < 4: 
                     continue
 
                 item = {
