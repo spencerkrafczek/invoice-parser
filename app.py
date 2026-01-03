@@ -17,24 +17,33 @@ def extract(file):
         total_match = re.search(r'TOTAL:\s*\$([\d\.]+)', text)
         data['total_amount'] = total_match.group(1) if total_match else 0.0
 
+        search_results = page.search("Description")
+        target_area = page
+
+        if search_results:
+            header_top = search_results[0]['top']
+            target_area = page.crop((0, header_top - 10, page.width, page.height))
+
         table_settings = {
-            "vertical_strategy": "explicit", 
-            "explicit_vertical_lines": [50, 340, 410, 490, 550],
+            "vertical_strategy": "text", 
             "horizontal_strategy": "text",
+            "snap_tolerance": 3,
         }
-        tables = page.extract_table(table_settings)
+        
+        tables = target_area.extract_table(table_settings)
+       
         items_raw = []
 
         if tables:
             for row in tables:
                 if not row or len(row) < 4: continue
 
-                desc = str(row[0])
-                qty = str(row[1])
-                price = str(row[2])
-                total = str(row[3])
+                desc = str(row[0]) if row[0] else ""
+                qty = str(row[1]) if row[1] else ""
+                price = str(row[2]) if row[2] else ""
+                total = str(row[3]) if row[3] else ""
 
-                if not qty or qty == "None" or qty == "" or "Qty" in qty:
+                if not qty or "Qty" in qty:
                     continue
 
                 item = {
@@ -43,8 +52,9 @@ def extract(file):
                     "Unit Price": price,
                     "Line Total": total
                 }
-
+                
                 items_raw.append(item)
+       
         data['line_items'] = items_raw
     
     return data
