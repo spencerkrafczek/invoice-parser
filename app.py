@@ -25,26 +25,23 @@ def extract(file):
         tables = page.extract_table(table_settings)
         items_raw = []
 
-        found_header = False
-
         if tables:
             for row in tables:
                 if not row or len(row) < 4: continue
 
-                first_cell = str(row[0])
+                desc = str(row[0])
+                qty = str(row[1])
+                price = str(row[2])
+                total = str(row[3])
 
-                if "Description" in first_cell:
-                    found_header = True
+                if not qty or qty == "None" or qty == "" or "Qty" in qty:
                     continue
 
-                if "TOTAL" in first_cell or "Total" in first_cell:
-                    break
-
                 item = {
-                    "Description" : row[0],
-                    "Qty" : row[1],
-                    "Unit Price" : row[2],
-                    "Total" : row[3]
+                    "Description": desc,
+                    "Qty": qty,
+                    "Unit Price": price,
+                    "Line Total": total
                 }
 
                 items_raw.append(item)
