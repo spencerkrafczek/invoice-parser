@@ -3,7 +3,7 @@
 * **Language:** Python 3.10+
 * **Frontend:** Streamlit
 * **Data Processing:** Pandas
-* **PDF Parsing:** `pdfplumber`
+* **PDF Parsing:** PDFPlumber
 * **Pattern Matching:** RegEx
 
 ## How It Works
@@ -11,7 +11,7 @@
 1.  The app accepts a PDF file and reads the text stream.
 2.  Instead of using hard-coded coordinates (which break if a vendor changes their logo size), the script searches for the "Description" table header.
 3.  The page is dynamically cropped to start exactly at the table header, eliminating false positives from the top-of-page metadata.
-4.  `pdfplumber` analyzes the "gutters" (whitespace) in the cropped area to define column boundaries.
+4.  PDFPlumber analyzes the "gutters" (whitespace) in the cropped area to define column boundaries.
 5.  A cleaning loop iterates through the rows, discarding any line items that lack a valid quantity or price.
 
 ## Installation & Usage
